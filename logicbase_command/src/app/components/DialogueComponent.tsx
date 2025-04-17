@@ -20,9 +20,9 @@ interface DialogComponentProps {
 const AlertDialog: React.FC<DialogComponentProps> = ({open, onClose, title, content, primaryButtonText, secondaryButtonText, onPrimaryClick, onSecondaryClick}) => {
     const [open_, setOpen] = React.useState<boolean>(open);
     
-    const handleClickOpen = () => {
-      setOpen(true);
-    };
+    // const handleClickOpen = () => {
+    //   setOpen(true);
+    // };
   
     const handleClose = () => {
       setOpen(false);
@@ -30,9 +30,9 @@ const AlertDialog: React.FC<DialogComponentProps> = ({open, onClose, title, cont
   
     return (
       <React.Fragment>
-        <Button variant="outlined" onClick={handleClickOpen}>
+        {/* <Button variant="outlined" onClick={handleClickOpen}>
           Open alert dialog
-        </Button>
+        </Button> */}
         <Dialog
           open={open_}
           onClose={handleClose}
