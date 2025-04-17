@@ -20,6 +20,7 @@ export default function QRGenerator() {
     const [form] = Form.useForm();
     const [isEmail, setIsEmail] = useState<boolean>(false)
     const [loading, setLoading] = useState<boolean>(false)
+    const [showDialog, setShowDialog] = useState<boolean>(false)
     const generateQR = async (email?:string) => {
         const res = await fetch('/api/generate-qr',{
             method: 'POST',
@@ -56,6 +57,10 @@ export default function QRGenerator() {
         }
         const result = await res.json()
         console.log('Email sent:', result)
+        if(result.message==='Registration link sent via email successfully'){
+            setIsEmail(false)
+            setShowDialog(true)
+        }
         setLoading(false)
     }
 
@@ -104,7 +109,7 @@ export default function QRGenerator() {
                     }}
                     />
             </Modal>
-            <AlertDialog title="Email Sent" content="Registration link sent successfully! Please ask your employee to check their email." open={qr!==''&& !isEmail} onClose={() => setQr('')} primaryButtonText="Okay" />
+            <AlertDialog title="Email Sent" content="Registration link sent via email successfully! Please ask your employee to check their email." open={showDialog} onClose={() => setQr('')} primaryButtonText="Okay" />
         </Content>
         <Footer className="text-center">Logicbase Command ©{new Date().getFullYear()} Developed by Raymond Valdepeñas</Footer>
     </Layout>
