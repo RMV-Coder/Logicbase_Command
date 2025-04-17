@@ -1,7 +1,9 @@
 // app/admin/qr/page.tsx
 'use client'
-import { useState } from 'react'
-import { Button, Form, Modal, Input, Layout, Space } from 'antd'
+import { useState } from 'react';
+
+import { Button, Form, Modal, Input, Layout, Space } from 'antd';
+import AlertDialog from '@/app/components/DialogueComponent';
 import { useQRCode } from 'next-qrcode';
 import { DateTime } from "luxon";
 const { Header, Content, Footer } = Layout;
@@ -102,6 +104,7 @@ export default function QRGenerator() {
                     }}
                     />
             </Modal>
+            <AlertDialog title="Email Sent" content="Registration link sent successfully! Please ask your employee to check their email." open={qr!==''&& !isEmail} onClose={() => setQr('')} primaryButtonText="Okay" />
         </Content>
         <Footer className="text-center">Logicbase Command ©{new Date().getFullYear()} Developed by Raymond Valdepeñas</Footer>
     </Layout>
