@@ -1,10 +1,10 @@
 // app/register/page.tsx
 'use client'
 import { useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
-import { Button, Form, Input, Alert } from 'antd'
+import { useEffect, useState, Suspense } from 'react'
+import { Button, Form, Input, Alert, Spin } from 'antd'
 
-export default function Register() {
+function RegisterForm() {
   const [valid, setValid] = useState(false)
   const token = useSearchParams().get('token')
 
@@ -31,5 +31,13 @@ export default function Register() {
       {/* Password + other fields */}
       <Button type="primary" htmlType="submit">Register</Button>
     </Form>
+  )
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={<Spin size="large" className="w-full mt-8" />}>
+      <RegisterForm />
+    </Suspense>
   )
 }
