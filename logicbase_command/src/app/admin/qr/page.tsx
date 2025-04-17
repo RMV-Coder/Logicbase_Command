@@ -24,7 +24,7 @@ export default function QRGenerator() {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: isEmail ? JSON.stringify({ role:'admin', email }): JSON.stringify({ role:'admin' }),
+            body:  JSON.stringify({ role:'admin', email })
 
         })
         if (!res.ok) {
