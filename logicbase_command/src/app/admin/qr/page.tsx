@@ -21,9 +21,9 @@ export default function QRGenerator() {
     const generateQR = async (email?:string) => {
         const res = await fetch('/api/generate-qr',{
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            // headers: {
+            //     'Content-Type': 'application/json',
+            // },
             body:  JSON.stringify({ role:'admin', email })
 
         })
