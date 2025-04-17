@@ -8,34 +8,45 @@ const { Header, Content, Footer } = Layout;
 interface FormValues {
     email: string
 }
+interface ResponseValues {
+    qrUrl: string;
+    token: string
+}
 export default function QRGenerator() {
     const { SVG } = useQRCode();
     const [qr, setQr] = useState<string>('')
     const [form] = Form.useForm();
     const [isEmail, setIsEmail] = useState<boolean>(false)
     const [loading, setLoading] = useState<boolean>(false)
-    const generateQR = async () => {
-        const res = await fetch('/api/generate-qr')
+    const generateQR = async (email?:string) => {
+        const res = await fetch('/api/generate-qr',{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: isEmail ? JSON.stringify({ role:'admin', email }): JSON.stringify({ role:'admin' }),
+
+        })
         if (!res.ok) {
             console.error('Failed to generate QR code')
             return
         }
-        const  qrUrl  = await res.json()
+        const  {qrUrl, token} : ResponseValues  = await res.json()
         // if(qrUrl) {
             console.log('QR URL:', qrUrl)
             setQr(qrUrl)
             if(isEmail){
-                return qrUrl
+                return token
             }
         // }
     }
 
     const sendEmail = async (values: FormValues) => {
         setLoading(true);
-        const qrURL = await generateQR();
+        const token = await generateQR(values.email);
         const res = await fetch('/api/send-email', {
             method: 'POST',
-            body: JSON.stringify({ email: values.email, qr: qrURL }),
+            body: JSON.stringify({ email: values.email, qr: token }),
         })
         if (!res.ok) {
             console.error('Failed to send email')
@@ -59,7 +70,7 @@ export default function QRGenerator() {
                 <p>Click the button below to generate a QR code for employee registration.</p>
             </div>
             <Space>
-                <Button onClick={generateQR}>Generate Employee QR</Button>
+                <Button onClick={() => generateQR()}>Generate Employee QR</Button>
                 <Button onClick={()=>setIsEmail(true)}>Send Registration Link via Email</Button>
             
             </Space>

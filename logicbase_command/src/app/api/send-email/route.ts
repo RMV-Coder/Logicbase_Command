@@ -18,6 +18,7 @@ export async function POST(req: NextRequest){
     try {
         const { email, qr } = await req.json();
         if(qr){
+            const qrUrl = `${process.env.NEXTAUTH_URL}/register?token=${qr}`
             const message = {
                 from: process.env.WEB_APP_EMAIL,
                 to: email,
@@ -27,7 +28,7 @@ export async function POST(req: NextRequest){
                 <div style="font-family: Arial, sans-serif; font-size: 16px;">
                     <p>Dear User,</p>
                     <p>You have been sent a registration link to create an account for Logicbase Command App. Please click the link below to proceed with the registration process:</p>
-                    <a href="${qr}" target="_blank" style="font-size: 24px; font-weight: bold; color: #233570;" >Create Account</a> 
+                    <a href="${qrUrl}" target="_blank" style="font-size: 24px; font-weight: bold; color: #233570;" >Create Account</a> 
                     <p>This link is valid for 1 hour. If you think this is a mistake, please ignore this email.</p>
                     <br>
                     <p>Thank you,</p>
