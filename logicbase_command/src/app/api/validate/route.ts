@@ -4,7 +4,7 @@ import { NextResponse, NextRequest } from 'next/server'
 export async function POST(req: NextRequest) {
     const { token } = await req.json()
     console.log('Token:', token)
-    const secret = process.env.JWT_SECRET as unknown as Uint8Array;
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET!)
     console.log('Secret:', secret)
     try {
         const { payload } = await jwtVerify(token, secret)
