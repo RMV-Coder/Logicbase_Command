@@ -59,6 +59,7 @@ export default function QRGenerator() {
         console.log('Email sent:', result)
         if(result.message==='Registration link sent via email successfully'){
             setIsEmail(false)
+            setQr('')
             setShowDialog(true)
         }
         setLoading(false)
@@ -109,7 +110,7 @@ export default function QRGenerator() {
                     }}
                     />
             </Modal>
-            <AlertDialog title="Email Sent" content="Registration link sent via email successfully! Please ask your employee to check their email." open={showDialog} onClose={() => setQr('')} primaryButtonText="Okay" />
+            <AlertDialog title="Email Sent" content="Registration link sent via email successfully! Please ask your employee to check their email." open={showDialog} onClose={() => {setQr(''); setIsEmail(false); setShowDialog(false)}} primaryButtonText="Okay" onPrimaryClick={() => {setQr(''); setIsEmail(false); setShowDialog(false)}}/>
         </Content>
         <Footer className="text-center">Logicbase Command ©{new Date().getFullYear()} Developed by Raymond Valdepeñas</Footer>
     </Layout>
