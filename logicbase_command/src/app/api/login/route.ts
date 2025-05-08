@@ -26,7 +26,7 @@ export async function POST(req: Request) {
             "SELECT u.* FROM users u WHERE user_id = ?",
             [userId]
         );
-        return NextResponse.json({...userData[0]}, {status: 200});
+        return NextResponse.json({...userData[0], message: "Login successful"}, {status: 200});
     } finally {
         if(connection) connection.release();
     }

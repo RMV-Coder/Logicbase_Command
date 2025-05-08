@@ -2,7 +2,7 @@
 'use client'
 import { useSearchParams } from 'next/navigation'
 import { Suspense, useState } from 'react'
-import { Button as MUIButton, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import { Button as MUIButton, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Snackbar, Alert } from '@mui/material';
 import { Button, Form, Input, Spin, Layout, Card, Checkbox, Divider, Typography, Flex } from 'antd'
 import { QrcodeOutlined } from '@ant-design/icons'
 import Nav from './components/NavBar'
@@ -25,6 +25,9 @@ function LandingPageLoginForm() {
   const [ loading, setLoading ] = useState<boolean>(false);
   const [form] = Form.useForm();
   const [open, setOpen] = useState<boolean>(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
   const router = useRouter();
   const handleClickOpen = () => {
     setOpen(true);
@@ -46,10 +49,12 @@ function LandingPageLoginForm() {
           body: JSON.stringify({ ...values, token })
       })
       const data = await response.json();
-      setLoading(false);
+      
       if(!response.ok){
+          setSnackbarMessage(data.error);
           throw new Error("Failed to login user");
       }
+      setSnackbarMessage(data.message);
       setUser({
         user_id:data.user_id,
         first_name:data.first_name,
@@ -65,7 +70,11 @@ function LandingPageLoginForm() {
       router.push("/dashboard");
     } catch (error) {
       console.error(error);
-    } 
+      setSnackbarSeverity('error')
+    } finally {
+      setLoading(false);
+      setSnackbarOpen(true);
+    }
   };
   const token = useSearchParams().get('token')
 
@@ -125,6 +134,11 @@ function LandingPageLoginForm() {
                     </Flex>
                     </Card>
             </Content>
+            <Snackbar anchorOrigin={{ vertical: 'top', horizontal:'center' }} open={snackbarOpen} autoHideDuration={6000} onClose={() => setSnackbarOpen(false)}>
+                  <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity} sx={{ width: '100%' }}>
+                      {snackbarMessage}
+                  </Alert>
+              </Snackbar>
             <Footer className="text-center">Logicbase Command {new Date().getFullYear()} Developed by Raymond Valdepeñas</Footer>
         </Layout>
     )
