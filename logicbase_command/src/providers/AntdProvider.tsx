@@ -10,7 +10,7 @@ export default function AntdProvider({
     <ConfigProvider
       theme={{
         token: {
-          colorPrimary: '#233570', // Logicbase dark blue (default)
+          colorPrimary: '#006AFF', // Logicbase dark blue (default)
           colorPrimaryHover: '#2E4B8D', // Logicbase blue (hover)
           colorPrimaryActive: '#1A2D6D', // Logicbase dark blue (active)
           colorTextBase: '#222222', // Default text color

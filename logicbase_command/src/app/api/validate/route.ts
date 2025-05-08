@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
         if (!payload.role) {
             return NextResponse.json({ valid: false }, { status: 401 })
         }
-        return NextResponse.json({ valid: true, role: payload.email })
+        return NextResponse.json({ valid: true, email: payload.email })
     } catch {
         return NextResponse.json({ valid: false }, { status: 401 })
     }

@@ -2,11 +2,12 @@
 'use client'
 import { useState } from 'react';
 
-import { Button, Form, Modal, Input, Layout, Space } from 'antd';
+import { Button, Form, Modal, Input, Layout, Space, QRCode } from 'antd';
 import AlertDialog from '@/app/components/DialogueComponent';
-import { useQRCode } from 'next-qrcode';
+import Nav from '../../components/NavBar';
+// import { useQRCode } from 'next-qrcode';
 import { DateTime } from "luxon";
-const { Header, Content, Footer } = Layout;
+const { Content, Footer } = Layout;
 interface FormValues {
     email: string
 }
@@ -15,7 +16,7 @@ interface ResponseValues {
     token: string
 }
 export default function QRGenerator() {
-    const { SVG } = useQRCode();
+    // const { SVG } = useQRCode();
     const [qr, setQr] = useState<string>('')
     const [form] = Form.useForm();
     const [isEmail, setIsEmail] = useState<boolean>(false)
@@ -69,9 +70,10 @@ export default function QRGenerator() {
   return (
     <>
     <Layout style={{display: 'flex', flexDirection: 'column', height: '100vh'}}>
-        <Header className="bg-white shadow-sm">
+        {/* <Header className="bg-white shadow-sm">
             <h1 className="text-2xl font-bold">Logicbase Command | Admin</h1>
-        </Header>
+        </Header> */}
+        <Nav/>
         <Content className="p-4" style={{flex:1, gap: '1rem', display: 'flex', flexDirection: 'column'}}>
             <div className="bg-white p-4 rounded shadow-sm">
                 <h2 className="text-xl font-semibold mb-4">Generate QR Code for Employee Registration</h2>
@@ -97,17 +99,20 @@ export default function QRGenerator() {
             </Modal>
             <Modal open={qr!==''&& !isEmail} onCancel={() => setQr('')}>
                 {/* <div dangerouslySetInnerHTML={{ __html: qr || '' }} /> */}
-                <p>Scan this QR to register new employees (expires in {DateTime.now().plus({ hours: 1 }).toFormat('DD hh:mm a')})</p>
-                <SVG
-                    text={qr}
-                    options={{
-                        margin: 2,
-                        width: 200,
-                        color: {
-                        dark: '#010599FF',
-                        light: '#FFBF60FF',
-                        },
-                    }}
+                <p>Scan this QR to register a new employee (expires in {DateTime.now().plus({ hours: 1 }).toFormat('DD hh:mm a')})</p>
+                <QRCode
+                    style={{margin: 'auto'}}
+                    type='svg'
+                    value={qr}
+                    size={400}
+                    // options={{
+                    //     margin: 2,
+                    //     width: 200,
+                    //     color: {
+                    //     dark: '#010599FF',
+                    //     light: '#FFBF60FF',
+                    //     },
+                    // }}
                     />
             </Modal>
             <AlertDialog title="Email Sent" content="Registration link sent via email successfully! Please ask your employee to check their email." open={showDialog} onClose={() => {setQr(''); setIsEmail(false); setShowDialog(false)}} primaryButtonText="Okay" onPrimaryClick={() => {setQr(''); setIsEmail(false); setShowDialog(false)}}/>
