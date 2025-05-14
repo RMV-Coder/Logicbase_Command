@@ -1,11 +1,14 @@
 'use client';
-import * as React from 'react';
+// import { useState, useMemo } from 'react';
 import { Layout, Menu } from 'antd'
 import type { MenuProps } from 'antd';
 import { useUserStore } from "@/stores/userStore";
 import { CalendarOutlined, LogoutOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
 import Nav from '../components/NavBar';
 import { usePathname, useRouter } from "next/navigation";
+// import { Account } from '@toolpad/core/Account';
+// import { AppProvider } from '@toolpad/core/AppProvider';
+// import { UserOrg, CustomSession } from '@/app/components/AccountCustom'
 const { Content, Sider, Footer } = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
@@ -52,6 +55,33 @@ export default function RootLayout({
     // const [snackbarMessage, setSnackbarMessage] = React.useState('');
     // const [snackbarSeverity, setSnackbarSeverity] = React.useState<'success' | 'error'>('success');
     const router = useRouter();
+    // const [customSession, setCustomSession]= useState<CustomSession | null>(null)
+    // const authentication = useMemo(() => ({
+    //     user: () => {
+    //       return user;
+    //     },
+    //     signIn: () => {
+    //       if (user)
+    //       setCustomSession({
+    //         user: {
+    //           name: `${user.first_name ?? ''} ${user.last_name ?? ''}`,
+    //           email: user.email ?? '',
+    //           image: user.profile_image ?? '',
+    //         },
+    //         org: {
+    //           name: user.company_name ?? '',
+    //           logo:
+    //             user.company_name === 'Logicbase'
+    //               ? '/LBI---logo-white-icon.png'
+    //               : '/default-logo.png',
+    //         //   url: 'https://mui.com',
+    //         },
+    //       });
+    //     },
+    //     signOut: () => {
+    //       setCustomSession(null);
+    //     },
+    //   }), [user]);
     // const [formData, setFormData] = React.useState({
     //     hour: 1
     // });
@@ -81,10 +111,25 @@ export default function RootLayout({
     // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     //     setFormData({ ...formData, [e.target.name]: e.target.value });
     // };
+    // const demoSession: CustomSession = {
+    //   user: {
+    //     name: 'Bharat Kashyap',
+    //     email: 'bharat@mui.com',
+    //     image: 'https://avatars.githubusercontent.com/u/19550456',
+    //   },
+    //   org: {
+    //     name: 'MUI Inc.',
+    //     url: 'https://mui.com',
+    //     logo: 'https://mui.com/static/logo.svg',
+    //   },
+    // };
+    
+    
 
     return (
     
     <Layout style={{ minHeight: '100vh', padding:0 }}>
+      {/* <AppProvider session={customSession} authentication={authentication}> */}
       <Sider
         breakpoint="lg"
         collapsedWidth="0"
@@ -114,15 +159,18 @@ export default function RootLayout({
                   if (!res.ok) throw new Error(data.error);
                   clearUser();
                   
-                  router.replace("/"); // Redirect to login page
+                  router.replace("/login"); // Redirect to login page
                   return
             } else {
               router.push(e.key)
             }
         }}  />
+        {/* <Account slots={{popoverContent: UserOrg}} slotProps={{preview:{variant:'condensed'}}}  /> */}
       </Sider>
+      {/* </AppProvider> */}
       <Layout>
         <Nav/>
+        
         <Content style={{ margin: '24px 16px 0', gap:'24px', display:'flex', flexDirection:'column' }}>
             {children}
                 {/* <Card sx={{ width: '100%', p:3 }}>
@@ -174,7 +222,7 @@ export default function RootLayout({
                         </CardActions>
                     </Card> */}
         </Content>
-        <Footer className="text-center">Logicbase Command {new Date().getFullYear()} Developed by Raymond Valdepenas</Footer>
+        <Footer className="text-center">Logicbase Command {new Date().getFullYear()} Developed by Raymond Valdepeñas</Footer>
       </Layout>
     </Layout>
     );

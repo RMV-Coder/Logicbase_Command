@@ -1,144 +1,162 @@
 // app/register/page.tsx
 'use client'
-import { useSearchParams } from 'next/navigation'
 import { Suspense, useState } from 'react'
-import { Button as MUIButton, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Snackbar, Alert } from '@mui/material';
-import { Button, Form, Input, Spin, Layout, Card, Checkbox, Divider, Typography, Flex } from 'antd'
-import { QrcodeOutlined } from '@ant-design/icons'
+import { Snackbar, Alert, Box } from '@mui/material';
+import { Button, Form, Input, Spin, Layout, Card, Checkbox, Typography, Select, DatePicker } from 'antd'
+import type { DatePickerProps } from 'antd';
+import type { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import Nav from './components/NavBar'
-import CameraCapture from './components/CameraCapture';
-import { useRouter } from "next/navigation";
-import { useUserStore } from "@/stores/userStore";
+// import { useRouter } from "next/navigation";
 const { Content, Footer } = Layout;
-const { Text } = Typography;
+const { Title } = Typography;
+const { Option } = Select;
+const { TextArea } = Input;
+const { RangePicker } = DatePicker;
 
-interface LoginFormValues {
+interface InquiryFormValues {
+  full_name?: string,
   email?: string,
-  password?: string,
-  remember?: string,
+  contact_number?: string,
+  company?: string,
+  subject?: string,
+  preferred_date?: [Dayjs, Dayjs],
+  message?: string,
 };
 const tailLayout = {
   wrapperCol: { offset: 8, span: 16 },
 };
 function LandingPageLoginForm() {
-  const setUser = useUserStore((state) => state.setUser);
   const [ loading, setLoading ] = useState<boolean>(false);
   const [form] = Form.useForm();
-  const [open, setOpen] = useState<boolean>(false);
+  // const [startDate, setStartDate] = useState<Dayjs | null>(dayjs());
+  // const [open, setOpen] = useState<boolean>(false);
+  const [isMeeting, setIsMeeting] = useState<boolean>(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
-  const router = useRouter();
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
+  // const router = useRouter();
 
-  const handleClose = () => {
-    setOpen(false);
-  };
-  const handleQRCapture = (data: string) => {
-    if(data.startsWith('https://logicbase-command.vercel.app/register?token=')||data.startsWith('http://localhost:3000/register?token=')){
-      router.push(data);
+
+  const getYearMonth = (date: Dayjs) => date.year() * 12 + date.month();
+  const disabled7DaysDate: DatePickerProps['disabledDate'] = (current, { from, type }) => {
+    if (from) {
+      const minDate = from.add(-1, 'days');
+      const maxDate = from.add(6, 'days');
+  
+      switch (type) {
+        case 'year':
+          return current.year() < minDate.year() || current.year() > maxDate.year();
+  
+        case 'month':
+          return (
+            getYearMonth(current) < getYearMonth(minDate) ||
+            getYearMonth(current) > getYearMonth(maxDate)
+          );
+  
+        default:
+          return Math.abs(current.diff(from.add(3, 'days'), 'days')) >= 4;
+      }
     }
-  }
-  const handleLogin = async(values: LoginFormValues) => {
+  
+    return current.add(1, 'days') < dayjs().endOf('day');//i want to use current if startDate is null otherwise the startDate
+  };
+  const handleSubmit = async(values: InquiryFormValues) => {
     try{
       setLoading(true);
-      const response = await fetch('/api/login', {
+      const response = await fetch('/api/send-inquiry', {
           method: 'POST',
-          body: JSON.stringify({ ...values, token })
+          body: JSON.stringify({ ...values })
       })
       const data = await response.json();
       
       if(!response.ok){
           setSnackbarMessage(data.error);
-          throw new Error("Failed to login user");
+          throw new Error("Failed to send inquiry");
       }
       setSnackbarMessage(data.message);
-      setUser({
-        user_id:data.user_id,
-        first_name:data.first_name,
-        last_name: data.last_name,
-        birthdate: data.birthdate, 
-        email:data.email, 
-        role:data.role,
-        company_name: data.company_name,
-        designation: data.designation,
-        profile_image: data.profile_image,
-        contact_number:data.contact_number
-      })
-      router.push("/dashboard");
+      setSnackbarSeverity('success');
     } catch (error) {
       console.error(error);
       setSnackbarSeverity('error')
     } finally {
       setLoading(false);
       setSnackbarOpen(true);
+      form.resetFields();
     }
   };
-  const token = useSearchParams().get('token')
 
     return (
         <Layout style={{display: 'flex', flexDirection: 'column', height: '100vh'}}>
             <Nav/>
-            <Dialog
-        open={open}
-        onClose={handleClose}
-        
-      >
-        <DialogTitle>Scan QR</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Scan QR Code generated by the Logicbase Command app to register.
-          </DialogContentText>
-          <CameraCapture onFrameCapture={handleQRCapture}/>
-        </DialogContent>
-        <DialogActions>
-          <MUIButton onClick={handleClose}>Cancel</MUIButton>
-        </DialogActions>
-      </Dialog>
-
             <Content className="p-4" style={{flex:1, gap: '1rem', display: 'flex', flexDirection: 'column'}}>
-                    <Card style={{width: '100%', maxWidth: '700px', margin: 'auto', padding: '1rem'}}>
-            
-                    <Form onFinish={handleLogin}
-                        form={form}
-                        labelCol={{ span: 8 }}
-                        wrapperCol={{ span: 16 }}
-                        style={{ maxWidth: 600 }}
-                        initialValues={{ remember: true }}
-                        >
-                        <Form.Item name="email" label='Email' rules={[{ required: true }]}>
-                            <Input placeholder="Company email"/>
-                        </Form.Item>
-                        <Form.Item
-                            name="password"
-                            label="Password"
-                            rules={[{required: true, message: 'Please input your password!',},
-                            {min: 6, message: 'Password is at least 6 characters long!'}]}
-                            hasFeedback
-                        >
-                            <Input.Password />
-                        </Form.Item>
-                        <Form.Item {...tailLayout} name="remember" valuePropName="checked" label={null}>
-                          <Checkbox>Remember me</Checkbox>
-                        </Form.Item>
-                        <Form.Item {...tailLayout} label={null}>
-                          <Button type="primary" htmlType="submit" loading={loading}>Login</Button>
-                        </Form.Item>
-
-                    </Form>
-                    <Divider></Divider>
-                    <Flex justify="center" align="center" gap={'12px'}>
-                    <Text italic>{"Don't have an account?"}</Text><Button onClick={handleClickOpen} icon={<QrcodeOutlined />}>Register via QR Code</Button>
-                    </Flex>
-                    </Card>
+              <Box sx={{ p:3, mt: 2, display: 'flex', justifyContent: 'center' }}>
+                <Title>How can we help?</Title>
+              </Box>
+              <Card style={{width: '100%', maxWidth: '700px', margin: 'auto', marginTop: '1rem', padding: '1rem'}}>
+                <Form onFinish={handleSubmit}
+                  form={form}
+                  labelCol={{ span: 8 }}
+                  wrapperCol={{ span: 16 }}
+                  style={{ maxWidth: 600 }}
+                  initialValues={{ remember: true }}
+                >
+                  <Form.Item name="full_name" label='Full Name' rules={[{ required: true }]}>
+                    <Input placeholder="Enter your name"/>
+                  </Form.Item>
+                  <Form.Item
+                    name="contact_number"
+                    label="Contact Number"
+                    rules={[{required: true, message: 'Please input your contact number that we can call you back.'},
+                    {min: 10, max:12, message: 'Invalid contact number'}]}
+                    hasFeedback
+                  >
+                    <Input placeholder='09123456789' />
+                  </Form.Item>
+                  <Form.Item name="email" label='Email Address' rules={[{ required: true }, { type: 'email', message: 'Please enter a valid Email address'}]}>
+                    <Input placeholder="Enter your email"/>
+                  </Form.Item>
+                  <Form.Item name="company" label='Company the Inquiry is For' rules={[{ required: true }]}>
+                    <Select placeholder="To whom the inquiry is for?">
+                      <Option value="Logicbase Interactive">Logicbase Interactive</Option>
+                      <Option value="MoneyCache">MoneyCache</Option>
+                    </Select>
+                  </Form.Item>
+                  <Form.Item name="subject" label='Subject' rules={[{ required: true }]}>
+                    <Input placeholder="Subject - What is the inquiry about?"/>
+                  </Form.Item>
+                  <Form.Item {...tailLayout} name="book_meeting" valuePropName="book_meeting" label={null}>
+                    <Checkbox checked={isMeeting} onChange={(e)=>setIsMeeting(e.target.checked)}>Book an online meeting</Checkbox>
+                  </Form.Item>
+                  {isMeeting && <Form.Item name="preferred_date"  label="Preferred Date">
+                    <RangePicker disabledDate={disabled7DaysDate} style={{width:'100%'}}
+                    // onChange={(dates) => {
+                    //   if(dates && dates.length === 2){
+                    //     setStartDate(dates[0]);
+                    //   }
+                    // }}
+                    />
+                  </Form.Item>}
+                  <Form.Item name="message" label="Message">
+                    <TextArea
+                      // value={value}
+                      // onChange={(e) => setValue(e.target.value)}
+                      placeholder="Message here..."
+                      autoSize={{ minRows: 4, maxRows: 7 }}
+                    />
+                  </Form.Item>
+                  <Form.Item {...tailLayout} label={null}>
+                    <Button type="primary" htmlType="submit" loading={loading}>Submit</Button>
+                  </Form.Item>
+                </Form>
+              </Card>
             </Content>
             <Snackbar anchorOrigin={{ vertical: 'top', horizontal:'center' }} open={snackbarOpen} autoHideDuration={6000} onClose={() => setSnackbarOpen(false)}>
                   <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity} sx={{ width: '100%' }}>
                       {snackbarMessage}
                   </Alert>
-              </Snackbar>
+            </Snackbar>
+              
             <Footer className="text-center">Logicbase Command {new Date().getFullYear()} Developed by Raymond Valdepeñas</Footer>
         </Layout>
     )

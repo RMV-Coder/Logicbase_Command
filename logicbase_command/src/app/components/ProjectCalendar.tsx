@@ -1,18 +1,9 @@
-'use client';
+import { useMemo, useRef, useState } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import interactionPlugin from '@fullcalendar/interaction'; // Optional: for clicking events
-import { useMemo, useState } from 'react';
-import {
-  Card,
-//   ToggleButton,
-//   ToggleButtonGroup,
-  Typography,
-  Box,
-  Tab,
-  Tabs
-} from '@mui/material';
+import interactionPlugin from '@fullcalendar/interaction';
+import { Card, Typography, Box, Tab, Tabs } from '@mui/material';
 
 interface Project {
   project_id: number;
@@ -29,20 +20,18 @@ interface ProjectCalendarProps {
 }
 
 const ProjectCalendar: React.FC<ProjectCalendarProps> = ({ projects }) => {
-  const [viewMode, setViewMode] = useState<'dayGridMonth' | 'timeGridWeek' | 'timeGridDay'>('timeGridWeek');
-  const [ tabIndex, setTabIndex ] = useState<number>(0);
+  const calendarRef = useRef<FullCalendar | null>(null);
+  const [tabIndex, setTabIndex] = useState<number>(0);
+
   const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
-      setTabIndex(newValue);
-      if (newValue === 0) setViewMode('dayGridMonth');
-      if (newValue === 1) setViewMode('timeGridWeek');
-      if (newValue === 2) setViewMode('timeGridDay');
-  }
-//   const handleViewModeChange = (
-//     event: React.MouseEvent<HTMLElement>,
-//     newView: 'dayGridMonth' | 'timeGridWeek' | 'timeGridDay' | null
-//   ) => {
-//     if (newView) setViewMode(newView);
-//   };
+    setTabIndex(newValue);
+    const calendarApi = calendarRef.current?.getApi();
+    if (calendarApi) {
+      if (newValue === 0) calendarApi.changeView('dayGridMonth');
+      if (newValue === 1) calendarApi.changeView('timeGridWeek');
+      if (newValue === 2) calendarApi.changeView('timeGridDay');
+    }
+  };
 
   const events = useMemo(() => {
     return projects
@@ -61,36 +50,20 @@ const ProjectCalendar: React.FC<ProjectCalendarProps> = ({ projects }) => {
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
         <Typography variant="h6">Project Calendar</Typography>
         <Tabs value={tabIndex} onChange={handleTabChange}>
-            <Tab label="Month" />
-            <Tab label="Week" />
-            <Tab label="Day" />
+          <Tab label="Month" />
+          <Tab label="Week" />
+          <Tab label="Day" />
         </Tabs>
-        {/* <ToggleButtonGroup
-          value={viewMode}
-          exclusive
-          onChange={handleViewModeChange}
-          aria-label="calendar view mode"
-          size="small"
-        >
-          <ToggleButton value="dayGridMonth" aria-label="Month view">
-            Month
-          </ToggleButton>
-          <ToggleButton value="timeGridWeek" aria-label="Week view">
-            Week
-          </ToggleButton>
-          <ToggleButton value="timeGridDay" aria-label="Day view">
-            Day
-          </ToggleButton>
-        </ToggleButtonGroup> */}
       </Box>
 
       <FullCalendar
+        ref={calendarRef}
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-        initialView={viewMode}
+        initialView="dayGridMonth"
         views={{
-          dayGridMonth: { type:'dayGridMonth',  buttonText: 'month' },
-          timeGridWeek: { type:'timeGridWeek', buttonText: 'week' },
-          timeGridDay: { type:'timeGridDay', buttonText: 'day' },
+          dayGridMonth: { type: 'dayGridMonth', buttonText: 'month' },
+          timeGridWeek: { type: 'timeGridWeek', buttonText: 'week' },
+          timeGridDay: { type: 'timeGridDay', buttonText: 'day' },
         }}
         events={events}
         height="auto"

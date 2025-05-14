@@ -52,14 +52,16 @@ CREATE TABLE IF NOT EXISTS projects (
 -- 5. Concerns table
 CREATE TABLE IF NOT EXISTS concerns (
   concern_id   INT AUTO_INCREMENT PRIMARY KEY,
-  user_id      INT            NOT NULL,
-  subject      ENUM('Bug Report','Inquiry','Feature Request') NOT NULL,
-  description  TEXT           NOT NULL,
+  full_name	   VARCHAR(100),
+  contact_number VARCHAR(20),
+  email        VARCHAR(100),
+  company	   VARCHAR(30),
+  subject      VARCHAR(100),
+  message  TEXT           NOT NULL,
   status       ENUM('Open','In Progress','Closed') DEFAULT 'Open',
   created_at   TIMESTAMP      DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users(user_id)
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  preferred_start DATE,
+  preferred_end DATE
 ) ENGINE=InnoDB;
 
 -- 6. Chats table

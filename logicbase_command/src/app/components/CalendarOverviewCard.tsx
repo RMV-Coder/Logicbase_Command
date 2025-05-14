@@ -1,98 +1,112 @@
 'use client';
-import {useEffect} from 'react';
+import { useEffect, useState } from 'react';
 import type { BadgeProps, CalendarProps } from 'antd';
 import { Badge, Calendar } from 'antd';
 import type { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import { Box, Card, CardContent, Typography, 
   //Alert, Snackbar 
 } from '@mui/material';
 import { useUserStore } from "@/stores/userStore";
 export const dynamic = 'force-dynamic';
-
-const getListData = (value: Dayjs) => {
-    let listData: { type: string; content: string }[] = []; // Specify the type of listData
-    switch (value.date()) {
-      case 8:
-        listData = [
-          { type: 'warning', content: 'This is warning event.' },
-          { type: 'success', content: 'This is usual event.' },
-        ];
-        break;
-      case 10:
-        listData = [
-          { type: 'warning', content: 'This is warning event.' },
-          { type: 'success', content: 'This is usual event.' },
-          { type: 'error', content: 'This is error event.' },
-        ];
-        break;
-      case 15:
-        listData = [
-          { type: 'warning', content: 'This is warning event' },
-          { type: 'success', content: 'This is very long usual event......' },
-          { type: 'error', content: 'This is error event 1.' },
-          { type: 'error', content: 'This is error event 2.' },
-          { type: 'error', content: 'This is error event 3.' },
-          { type: 'error', content: 'This is error event 4.' },
-        ];
-        break;
-      default:
-    }
-    return listData || [];
-  };
-  
-  const getMonthData = (value: Dayjs) => {
-    if (value.month() === 8) {
-      return 1394;
-    }
-  };
+type ActivityLog = {
+  log_id: number;
+  user_id: number;
+  entity: 'project' | 'client' | 'message' | 'profile';
+  action: string;
+  created_at: string;
+  start?: string;
+  end?: string;
+};
 export default function CalendarOverviewCard() {
-    // const [loading, setLoading] = React.useState<boolean>(false);
-    // const [isEditing, setIsEditing] = React.useState<boolean>(false);
-    // const setUser = useUserStore((state) => state.setUser);
     const user = useUserStore((state) => state.user);
-    // const [snackbarOpen, setSnackbarOpen] = useState(false);
-    // const [snackbarMessage, setSnackbarMessage] = useState('');
-    // const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
-    // const router = useRouter();
-    // const [formData, setFormData] = React.useState({
-    //     email: '',
-    //     password: '',
-    // });
+    const [logs, setLogs] = useState<ActivityLog[]>([]);
     if(user){
-        console.log('loaded');
+      console.log('loaded user');
     }
-    
-      const monthCellRender = (value: Dayjs) => {
-        const num = getMonthData(value);
-        return num ? (
-          <div className="notes-month">
-            <section>{num}</section>
-            <span>Backlog number</span>
-          </div>
-        ) : null;
+    useEffect(() => {
+      const fetchData = async (user_id: string) => {
+        try {
+          const response = await fetch(`/api/activity-log`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ user_id }),
+          });
+  
+          if (!response.ok) throw new Error('Failed to fetch activity logs');
+          const data = await response.json();
+          setLogs(data.rows);
+        } catch (error) {
+          console.error(error);
+        }
       };
+  
+      if (user?.user_id) {
+        fetchData(user.user_id);
+      }
+    }, [user]);
+    const getListData = (value: Dayjs) => {
+      const dateStr = value.format('YYYY-MM-DD');
+      const filteredLogs = logs.filter((log) => dayjs(log.created_at).format('YYYY-MM-DD') === dateStr);
+  
+      return filteredLogs.map((log) => ({
+        type: 'success' as BadgeProps['status'],
+        content: `${log.action} ${log.entity}`,
+      }));
+    };
+  
+    const dateCellRender = (value: Dayjs) => {
+      const listData = getListData(value);
+      return (
+        <ul className="events">
+          {listData.map((item, index) => (
+            <li key={index}>
+              <Badge status={item.type} text={item.content} />
+            </li>
+          ))}
+        </ul>
+      );
+    };
+  
+    const cellRender: CalendarProps<Dayjs>['cellRender'] = (current, info) => {
+      if (info.type === 'date') return dateCellRender(current);
+      return info.originNode;
+    };
+  
+      // const monthCellRender = (value: Dayjs) => {
+      //   const num = getMonthData(value);
+      //   return num ? (
+      //     <div className="notes-month">
+      //       <section>{num}</section>
+      //       <span>Backlog number</span>
+      //     </div>
+      //   ) : null;
+      // };
     
-      const dateCellRender = (value: Dayjs) => {
-        const listData = getListData(value);
-        return (
-          <ul className="events">
-            {listData.map((item) => (
-              <li key={item.content}>
-                <Badge status={item.type as BadgeProps['status']} text={item.content} />
-              </li>
-            ))}
-          </ul>
-        );
-      };
+      // const dateCellRender = (value: Dayjs) => {
+      //   const listData = getListData(value);
+      //   return (
+      //     <ul className="events">
+      //       {listData.map((item) => (
+      //         <li key={item.content}>
+      //           <Badge status={item.type as BadgeProps['status']} text={item.content} />
+      //         </li>
+      //       ))}
+      //     </ul>
+      //   );
+      // };
     
-      const cellRender: CalendarProps<Dayjs>['cellRender'] = (current, info) => {
-        if (info.type === 'date') return dateCellRender(current);
-        if (info.type === 'month') return monthCellRender(current);
-        return info.originNode;
-      };
-    const fetchData = async (id:string) => {
+    const fetchData = async (user_id:string) => {
             try {
-                const response = await fetch(`dashboard/api/profile-attendance/${id}`);
+                const response = await fetch(`/api/activity-log`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ user_id }),
+                });
                 if (!response.ok) throw new Error('Failed to fetch attendance data');
                 const data = await response.json()
                 console.log('Data: ', data);

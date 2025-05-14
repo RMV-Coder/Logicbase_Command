@@ -1,11 +1,13 @@
 import React from 'react';
+import type { Dayjs } from 'dayjs';
 import { Button, Col, DatePicker, Drawer, Form, Input, Row, Select, Space } from 'antd';
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 interface ProjectFormValues {
     project_name: string,
-    project_details: string
-    project_duration: string,
+    project_details: string,
+    project_link: string,
+    project_duration: [Dayjs, Dayjs],
     project_type: string,
 }
 interface NewProjectDrawerFormProps {

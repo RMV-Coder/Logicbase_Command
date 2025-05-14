@@ -129,8 +129,8 @@ export default function CalendarOverviewCard() {
             <Card
             sx={{
                 width: '60vw',
-                maxWidth: '900px',
-                minWidth: '500px',
+                maxWidth: '450px',
+                minWidth: '300px',
                 height: '72vh',
                 minHeight:'756px',
                 maxHeight:'1080px',

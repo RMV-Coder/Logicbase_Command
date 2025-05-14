@@ -181,7 +181,7 @@ function RegisterForm () {
                             rules={[{ required: true, message: 'Please select your company!' }]}
                         >
                             <Select placeholder="Select your company">
-                            <Option value="Logicbase">Logicbase</Option>
+                            <Option value="Logicbase Interactive">Logicbase Interactive</Option>
                             <Option value="MoneyCache">MoneyCache</Option>
                             </Select>
                         </Form.Item>
