@@ -153,6 +153,7 @@ export default function UserDashboard() {
             <Title>Profile</Title>
             <Card sx={{minWidth:'fit-content', minHeight:'fit-content', maxWidth:'100%'}}>
                 <CardContent sx={{p:6}}>
+                   {user ? ( 
             <Descriptions 
             labelStyle={{fontSize:'1rem'}}
             contentStyle={{fontSize:'1rem'}}
@@ -188,7 +189,9 @@ export default function UserDashboard() {
                     onChange={handleAvatarChange}
                 />
     </ButtonBase>
-                } column={{ xs: 1, sm: 1, md: 1, lg: 2, xl: 2, xxl: 2 }} items={profile ? Object.entries(profile).map(([key, value]) => ({ key, label:key.replace(/_/g, ' ').normalize(), children:value })) : Object.entries(user as unknown as ProfileData).map(([key, value]) => ({ key, label:key!=='profile_image'?key.replace(/_/g, ' ').toLowerCase().split(' ').map(word=>word.charAt(0).toUpperCase()+word.slice(1)).join('').normalize():'', children:key!=='profile_image'?value:'' }))} style={{ minWidth: '45vw', maxWidth:'60vw'}}/>
+                } column={{ xs: 1, sm: 1, md: 1, lg: 2, xl: 2, xxl: 2 }} items={profile ? Object.entries(profile).map(([key, value]) => ({ key, label:key.replace(/_/g, ' ').normalize(), children:value })) : Object.entries(user as unknown as ProfileData).map(([key, value]) => ({ key, label:key!=='profile_image'?key.replace(/_/g, ' ').toLowerCase().split(' ').map(word=>word.charAt(0).toUpperCase()+word.slice(1)).join('').normalize():'', children:key === 'birthdate' && value ? dayjs(value).format('MMMM D, YYYY') :(key!=='profile_image'?value:'') }))} style={{ minWidth: '45vw', maxWidth:'60vw'}}/>):(
+                    <Card>Loading profile information...</Card>
+                )}
             </CardContent>
             <CardActions sx={{p:6, pt:0}}>
                 <Button variant='outlined' size="large" onClick={()=>setOpenDrawer(true)}>Update</Button>
