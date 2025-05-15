@@ -34,7 +34,11 @@ export default function LoginForm(){
         setOpen(false);
       };
       const handleQRCapture = (data: string) => {
+        
         if(data.startsWith('https://logicbase-command.vercel.app/register?token=')||data.startsWith('http://localhost:3000/register?token=')){
+          setSnackbarMessage('Redirecting to registration page...');
+          setSnackbarSeverity('success');
+          setSnackbarOpen(true);
           router.push(data);
         }
       }

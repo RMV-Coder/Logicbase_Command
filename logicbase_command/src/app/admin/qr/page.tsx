@@ -1,10 +1,11 @@
 // app/admin/qr/page.tsx
 'use client'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import { Button, Form, Modal, Input, Layout, Space, QRCode } from 'antd';
 import AlertDialog from '@/app/components/DialogueComponent';
 import Nav from '../../components/NavBar';
+import VerifyAdminDialog from '@/app/components/VerifyAdminDialog';
 // import { useQRCode } from 'next-qrcode';
 import { DateTime } from "luxon";
 const { Content, Footer } = Layout;
@@ -22,6 +23,14 @@ export default function QRGenerator() {
     const [isEmail, setIsEmail] = useState<boolean>(false)
     const [loading, setLoading] = useState<boolean>(false)
     const [showDialog, setShowDialog] = useState<boolean>(false)
+    const [showVerifyDialog, setShowVerifyDialog] = useState<boolean>(false)
+    // const [dialogMessage, setDialogMessage] = useState<string>('')
+    const [isAdmin, setIsAdmin] = useState<boolean>(false);
+    useEffect(()=>{
+        if(!isAdmin){
+            setShowVerifyDialog(true)
+        }
+    }, [])
     const generateQR = async (email?:string) => {
         const res = await fetch('/api/generate-qr',{
             method: 'POST',
@@ -115,6 +124,7 @@ export default function QRGenerator() {
                     // }}
                     />
             </Modal>
+            <VerifyAdminDialog open={showVerifyDialog} onClose={()=>setShowVerifyDialog(false)} isVerified={setIsAdmin}/>
             <AlertDialog title="Email Sent" content="Registration link sent via email successfully! Please ask your employee to check their email." open={showDialog} onClose={() => {setQr(''); setIsEmail(false); setShowDialog(false)}} primaryButtonText="Okay" onPrimaryClick={() => {setQr(''); setIsEmail(false); setShowDialog(false)}}/>
         </Content>
         <Footer className="text-center">Logicbase Command ©{new Date().getFullYear()} Developed by Raymond Valdepeñas</Footer>

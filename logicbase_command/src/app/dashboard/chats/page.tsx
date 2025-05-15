@@ -81,6 +81,9 @@ const Chats: React.FC = () => {
           setAllUsers(result.users);
           console.log('Users: ', result.users);
         } catch (error) {
+          setSnackbarMessage("Error fetching users");
+          setSnackbarSeverity("error");
+          setSnackbarOpen(true);
           console.error(error);
         }
     };
@@ -98,17 +101,16 @@ const Chats: React.FC = () => {
           const result = await response.json();
           if (!response.ok) throw new Error(result.error || "Failed to create chat");
       
-          setSnackbarMessage(result.message);
-          setSnackbarSeverity("success");
-          setSelectedChatId(result.chatId); // optionally select chat immediately
+          // setSnackbarMessage(result.message);
+          // setSnackbarSeverity("success");
+          // setSelectedChatId(result.chatId); // optionally select chat immediately
           if(user&&user.user_id)
           fetchChats(user.user_id); // refresh chat list
         } catch (err) {
           setSnackbarMessage("Error creating chat");
           setSnackbarSeverity("error");
-          console.error(err);
-        } finally {
           setSnackbarOpen(true);
+          console.error(err);
         }
       };
       
@@ -224,7 +226,8 @@ const Chats: React.FC = () => {
                 Chat with {selectedChat.participantName}
               </Typography>
               <Box sx={{ flex: 1, overflowY: 'auto', mb: 2 }}>
-                {selectedChat.messages.map((msg, index) => (
+                {selectedChat.messages.length > 0 ?(
+                selectedChat.messages.map((msg, index) => (
                   <Typography
                     key={index}
                     align={msg.sender === 'Me' ? 'right' : 'left'}
@@ -232,7 +235,11 @@ const Chats: React.FC = () => {
                   >
                     <strong>{msg.sender}: </strong>{msg.content}
                   </Typography>
-                ))}
+                ))):(
+                  <Typography variant="subtitle2" color="textSecondary" align="center">
+                      No messages yet. Start the conversation!
+                  </Typography>
+              )}
               </Box>
               <Box sx={{ display: 'flex', gap: 2 }}>
                 <TextField

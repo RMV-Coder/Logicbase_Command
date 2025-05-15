@@ -15,14 +15,6 @@ export type User = {
   date?: string;
   user_id?: string;
   role?: string;
-  
-
-  // loginData?: {
-  //   time_in: string;
-  //   time_in_image: string;
-  //   time_out: string;
-  //   time_out_image: string;
-  // };
 } | null;
 
 interface UserState {
@@ -36,7 +28,7 @@ export const useUserStore = create<UserState>()(
     (set) => ({
       user: null,
       setUser: (user) => set({ user }),
-      clearUser: () => set({ user: null }),
+      clearUser: () => set({ user: null })
     }),
     {
       name: "logicbase-command-user-storage",

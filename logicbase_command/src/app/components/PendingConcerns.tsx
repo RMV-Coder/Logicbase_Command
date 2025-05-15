@@ -95,7 +95,7 @@ const PendingConcernsCard: React.FC<ConcernsProps> = ({data, user_id, refetch}) 
                       Pending Concerns
                     </Typography>
                     <Box sx={{flex:1, overflowY:'auto'}}>
-                    {data.map((dataItem) => (
+                    {data?.length > 0 ? ( data.map((dataItem) => (
                       <>
                       <Card sx={{borderLeftWidth:3, borderLeftColor: dataItem.status==='Open'?'red':dataItem.status==='In progress'?'blue':'gray' }}>
                       <CardContent key={dataItem.concern_id}>
@@ -114,7 +114,12 @@ const PendingConcernsCard: React.FC<ConcernsProps> = ({data, user_id, refetch}) 
                       </CardActions>
                       </Card>
                       </>
-                    ))}
+                    ))):
+                      <Card>
+                        <CardContent>
+                          <Typography variant="h6">{"No Pending Concerns"}</Typography>
+                        </CardContent>
+                      </Card>}
                     </Box>
                 </CardContent>
           </Card>          

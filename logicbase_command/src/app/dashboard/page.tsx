@@ -52,21 +52,21 @@ export default function UserDashboard() {
             console.error(error);
         }
       }
-    const fetchData = async (id:string) => {
-        try {
-            const response = await fetch(`dashboard/api/profile/${id}`);
-            if (!response.ok) throw new Error('Failed to fetch attendance data');
-            const data = await response.json()
-            console.log('Data: ', data);
-            if(!response.ok){
-                throw new Error(data.error);
-            }
-            // setConcernsData(data);
-        }
-        catch (error){
-            console.error(error);
-        }
-    }
+    // const fetchData = async (id:string) => {
+    //     try {
+    //         const response = await fetch(`dashboard/api/profile/${id}`);
+    //         if (!response.ok) throw new Error('Failed to fetch attendance data');
+    //         const data = await response.json()
+    //         console.log('Data: ', data);
+    //         if(!response.ok){
+    //             throw new Error(data.error);
+    //         }
+    //         // setConcernsData(data);
+    //     }
+    //     catch (error){
+    //         console.error(error);
+    //     }
+    // }
     const refetch = () => {
         if(user)
         fetchConcernsData(user.company_name);
@@ -74,7 +74,7 @@ export default function UserDashboard() {
     useEffect(()=>{
         if(user){
             if(user.user_id)
-            fetchData(user.user_id);
+            // fetchData(user.user_id);
             if(user.company_name)
             fetchConcernsData(user.company_name);
         }

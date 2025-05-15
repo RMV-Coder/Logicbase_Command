@@ -36,11 +36,10 @@ export default function UserDashboard() {
     const [ projects, setProjects ] = useState<Project[]>([]);
     const [ tabIndex, setTabIndex ] = useState<number>(0);
     const [ status, setStatus ] = useState<string>('');
-    const [selectedProjectId, setSelectedProjectId] = useState<number | null>(null);
+    const [ selectedProjectId, setSelectedProjectId ] = useState<number | null>(null);
     const [ selectedProject, setSelectedProject ] = useState<DescriptionsProps['items']>([{key:'0', label:'', children:''}]);
-    const handleStatusChange = (status: string) => {
-        setStatus(status);
-    }
+    
+    
     const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
         setTabIndex(newValue);
     }
@@ -55,6 +54,10 @@ export default function UserDashboard() {
         catch (error){
             console.error(error);
         }
+    }
+    const handleStatusChange = (status: string) => {
+        setStatus(status);
+        fetchData();
     }
     const handleSubmit = async(values:ProjectFormValues) => {
         setLoading(true)
@@ -119,7 +122,7 @@ export default function UserDashboard() {
             {/* <CardContent> */}
             
                 <Box sx={{ p:2, mt: 2, display: 'flex', justifyContent: 'space-between' }}>
-                    <Title>Projects</Title>
+                    <Title style={{minWidth:'fit-content'}}>Projects</Title>
                     {selectedProjectId === null || tabIndex === 0 || tabIndex === 1 ? <Button
                         variant="contained"
                         color="primary"
@@ -130,7 +133,7 @@ export default function UserDashboard() {
                         New Project
                     </Button>:
                     <Card sx={{p:2, mx:1}}>
-                    <Descriptions title="Project Information" items={selectedProject} style={{ minWidth: '50vw', maxWidth:'60vw'}}/>
+                    <Descriptions title="Project Information" column={{ xs: 1, sm: 2, md: 3, lg: 3, xl: 4, xxl: 4 }} items={selectedProject} style={{ minWidth: '45vw', maxWidth:'60vw'}}/>
                     </Card>}
                 </Box>
                 <Tabs value={tabIndex} onChange={handleTabChange}>
@@ -151,7 +154,7 @@ export default function UserDashboard() {
                             Due: {new Date(project.project_due).toLocaleDateString()}
                             </Typography>
                             <Typography variant="body2">
-                            Status: <Chip variant={'filled'} size={'small'} color={project.project_status === 'Completed' ? 'success' : project.project_status === 'Planned' ? 'info':project.project_status === 'On going' ? 'primary':project.project_status === 'Planning' ? 'secondary':project.project_status === 'Past Due' ? 'error':'warning'} label={status||project.project_status}/>
+                            Status: <Chip variant={'filled'} size={'small'} color={project.project_status === 'Completed' ? 'success' : project.project_status === 'Planned' ? 'info':project.project_status === 'On going' ? 'primary':project.project_status === 'Planning' ? 'secondary':project.project_status === 'Past Due' ? 'error':'warning'} label={project.project_status}/>
                             </Typography>
                             {project.project_config && (
                             <Typography variant="body2" sx={{ mt: 1 }}>

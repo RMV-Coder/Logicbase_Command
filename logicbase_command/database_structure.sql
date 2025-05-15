@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS users (
   profile_image  LONGTEXT,
   last_login     TIMESTAMP,
   isActive       TINYINT,
-  gender         ENUM('male','female'),
+  gender         ENUM('Male','Female'),
   contact_number VARCHAR(20)
 ) ENGINE=InnoDB;
 
@@ -50,6 +50,17 @@ CREATE TABLE IF NOT EXISTS projects (
 ) ENGINE=InnoDB;
 
 -- 5. Concerns table
+-- CREATE TABLE IF NOT EXISTS concerns (
+--   concern_id   INT AUTO_INCREMENT PRIMARY KEY,
+--   user_id      INT            NOT NULL,
+--   subject      ENUM('Bug Report','Inquiry','Feature Request') NOT NULL,
+--   description  TEXT           NOT NULL,
+--   status       ENUM('Open','In Progress','Closed') DEFAULT 'Open',
+--   created_at   TIMESTAMP      DEFAULT CURRENT_TIMESTAMP,
+--   FOREIGN KEY (user_id) REFERENCES users(user_id)
+--     ON UPDATE CASCADE
+--     ON DELETE CASCADE
+-- ) ENGINE=InnoDB;
 CREATE TABLE IF NOT EXISTS concerns (
   concern_id   INT AUTO_INCREMENT PRIMARY KEY,
   full_name	   VARCHAR(100),
@@ -63,11 +74,13 @@ CREATE TABLE IF NOT EXISTS concerns (
   preferred_start DATE,
   preferred_end DATE
 ) ENGINE=InnoDB;
+-- ALTER TABLE logicbase_com_db.concerns modify subject varchar(100);
+-- ALTER TABLE logicbase_com_db.concerns ADD preferred_start DATE, ADD preferred_end DATE;
 
 -- 6. Chats table
 CREATE TABLE IF NOT EXISTS chats (
   chat_id      INT AUTO_INCREMENT PRIMARY KEY,
-  chat_token   VARCHAR(255)    NOT NULL,
+  chat_token   VARCHAR(255) NOT NULL,
   chat_config  JSON
 ) ENGINE=InnoDB;
 
@@ -97,15 +110,16 @@ CREATE TABLE IF NOT EXISTS chat_message (
     ON UPDATE CASCADE
     ON DELETE CASCADE
 ) ENGINE=InnoDB;
-
+USE `logicbase_com_db`;
 -- 9. Activity log table
 CREATE TABLE IF NOT EXISTS activity_log (
   log_id     INT AUTO_INCREMENT PRIMARY KEY,
   user_id    INT            NOT NULL,
-  entity     ENUM('project','client','message','profile') NOT NULL,
-  entity_id  INT            NOT NULL,
+  entity     ENUM('project','client','message','profile') NOT NULL, -- type may refer to entity
   action     VARCHAR(50)    NOT NULL,  -- e.g. 'created','updated'
   created_at TIMESTAMP      DEFAULT CURRENT_TIMESTAMP,
+  start 	DATETIME,
+  end		DATETIME,
   FOREIGN KEY (user_id) REFERENCES users(user_id)
     ON UPDATE CASCADE
     ON DELETE CASCADE

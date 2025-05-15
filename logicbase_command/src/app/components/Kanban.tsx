@@ -86,7 +86,11 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({project, projectId, statusChan
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
-    
+    useEffect(() => {
+        if (project?.project_status && project.project_status !== status) {
+          setStatus(project.project_status);
+        }
+      }, [project.project_status]);
     const saveKanbanData = async (updatedData: KanbanState) => {
     try {
       const response = await fetch(`/api/projects/${projectId}/kanban`, {
@@ -320,7 +324,7 @@ const addTask = () => {
           }
         }
         updateStatus();
-        // statusChange(status);
+        statusChange(status);
       }
   }, [status])
 //   useEffect(() => {
@@ -491,9 +495,10 @@ const addTask = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
-          {dialogTitle === 'Add New Column' && <Button onClick={handleAddColumn} variant="contained">Add</Button>}
+          {dialogTitle === 'Add New Column' && <Button onClick={handleAddColumn} variant="contained" disabled={newColumnTitle===''}>Add</Button>}
           {dialogTitle === 'Edit Column' && <Button onClick={()=>{
-            handleEditColumn(selectedColumnId as string, newColumnTitle)}} variant="contained">Save</Button>}
+            handleEditColumn(selectedColumnId as string, newColumnTitle)
+            setOpenDialog(false)}} variant="contained">Save</Button>}
           {dialogTitle === 'Edit Task' && <Button onClick={()=>{
             editTask(selectedTask, currentTaskContent)
             setOpenDialog(false)

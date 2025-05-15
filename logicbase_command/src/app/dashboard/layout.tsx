@@ -1,9 +1,9 @@
 'use client';
-// import { useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { Layout, Menu } from 'antd'
 import type { MenuProps } from 'antd';
 import { useUserStore } from "@/stores/userStore";
-import { CalendarOutlined, LogoutOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
+import { ProfileOutlined, DashboardOutlined, CalendarOutlined, LogoutOutlined, MessageOutlined, UserOutlined } from '@ant-design/icons';
 import Nav from '../components/NavBar';
 import { usePathname, useRouter } from "next/navigation";
 // import { Account } from '@toolpad/core/Account';
@@ -36,13 +36,13 @@ export default function RootLayout({
     children: React.ReactNode;
   }>) {
   const items = [
-        getItem('Dashboard', '/dashboard', false, <UserOutlined />),
+        getItem('Dashboard', '/dashboard', false, <DashboardOutlined />),
         getItem('Profile', '/dashboard/profile', false, <UserOutlined />),
-        getItem('Projects', '/dashboard/projects', false, <TeamOutlined />),
-        getItem('Clients', '/dashboard/clients', false, <CalendarOutlined />),
-        getItem('Calendar', '/dashboard/calendar', false, <TeamOutlined />),
-        getItem('Chats', '/dashboard/chats', false, <TeamOutlined />),
-        getItem('Logout', '/logout', false, <LogoutOutlined />),
+        getItem('Projects', '/dashboard/projects', false, <ProfileOutlined />),
+        // getItem('Clients', '/dashboard/clients', false, <CalendarOutlined />),
+        getItem('Calendar', '/dashboard/calendar', false, <CalendarOutlined />),
+        getItem('Chats', '/dashboard/chats', false, <MessageOutlined />),
+        getItem('Signout', '/logout', false, <LogoutOutlined />),
   ]
 //   const [rows, setRows] = React.useState<AttendanceData[]>([]);
   const user = useUserStore((state)=>state.user)
@@ -50,82 +50,24 @@ export default function RootLayout({
   console.log('User:', user);
 
     const pathname = usePathname();
-    // const [loading, setLoading] = React.useState<boolean>(false);
-    // const [snackbarOpen, setSnackbarOpen] = React.useState(false);
-    // const [snackbarMessage, setSnackbarMessage] = React.useState('');
-    // const [snackbarSeverity, setSnackbarSeverity] = React.useState<'success' | 'error'>('success');
     const router = useRouter();
-    // const [customSession, setCustomSession]= useState<CustomSession | null>(null)
-    // const authentication = useMemo(() => ({
-    //     user: () => {
-    //       return user;
-    //     },
-    //     signIn: () => {
-    //       if (user)
-    //       setCustomSession({
-    //         user: {
-    //           name: `${user.first_name ?? ''} ${user.last_name ?? ''}`,
-    //           email: user.email ?? '',
-    //           image: user.profile_image ?? '',
-    //         },
-    //         org: {
-    //           name: user.company_name ?? '',
-    //           logo:
-    //             user.company_name === 'Logicbase'
-    //               ? '/LBI---logo-white-icon.png'
-    //               : '/default-logo.png',
-    //         //   url: 'https://mui.com',
-    //         },
-    //       });
-    //     },
-    //     signOut: () => {
-    //       setCustomSession(null);
-    //     },
-    //   }), [user]);
-    // const [formData, setFormData] = React.useState({
-    //     hour: 1
-    // });
-    // const handleSubmit = async() => {
-    //     setLoading(true);
-    //     console.log('Submitting:', formData);
-    //     // Send to backend here
-    //     const response = await fetch('/api/login', {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //         },
-    //         body: JSON.stringify(formData),
-    //     });
-    //     setSnackbarOpen(false);
-    //     const data = await response.json()
-    //     console.log('Response:', data);
-    //     setSnackbarMessage(data.error || 'Unknown response');
-    //     setSnackbarSeverity(data.error ? 'error' : 'success');
-    //     setSnackbarOpen(true);
-    //     setLoading(false);
-    //     if(!response.ok){
-    //         throw new Error("Error signing up");
-    //     }
-    //     router.push("/dashboard");
-    // };
-    // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     setFormData({ ...formData, [e.target.name]: e.target.value });
-    // };
-    // const demoSession: CustomSession = {
-    //   user: {
-    //     name: 'Bharat Kashyap',
-    //     email: 'bharat@mui.com',
-    //     image: 'https://avatars.githubusercontent.com/u/19550456',
-    //   },
-    //   org: {
-    //     name: 'MUI Inc.',
-    //     url: 'https://mui.com',
-    //     logo: 'https://mui.com/static/logo.svg',
-    //   },
-    // };
-    
-    
-
+    const [isMounted, setIsMounted] = useState<boolean>(false);
+    if(user){
+      console.log('User loaded...')
+    }
+    useEffect(()=>{
+        if(isMounted){
+          if(user){
+              console.log('User loaded...')
+          }else{
+              console.log('User not loaded...')
+              clearUser();
+              router.push('/login');
+          }
+        } else {
+          setIsMounted(true);
+        }
+    },[isMounted])
     return (
     
     <Layout style={{ minHeight: '100vh', padding:0 }}>
