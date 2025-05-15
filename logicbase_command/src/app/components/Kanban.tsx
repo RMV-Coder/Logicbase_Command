@@ -189,7 +189,6 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({project, projectId, statusChan
     return updated;
     });
   };
-  
   const deleteTask = (taskId: string) => {
     setKanbanData((prev) => {
       const newTasks = { ...prev.tasks };
@@ -201,7 +200,6 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({project, projectId, statusChan
           (id) => id !== taskId
         );
       }
-  
       const updated = {
         ...prev,
         tasks: newTasks,
@@ -236,9 +234,6 @@ const addTask = () => {
   });
   setNewTaskContent('');
 };
-
-  
-
   const handleAddColumn = () => {
     setDialogTitle('Add New Column');
     const newColumnId = `column-${Date.now()}`;
@@ -296,7 +291,6 @@ const addTask = () => {
         console.error('Error fetching Kanban data:', error);
       }
     };
-  
     fetchKanbanData();
   }, [projectId]);
   useEffect(() => {
@@ -351,7 +345,7 @@ const addTask = () => {
     <>
     <Box sx={{ display: 'flex', overflowX: 'auto', p: 2 }}>
         {/* <Divider/> */}
-        <Box sx={{ minWidth: 300, mx: 1, backgroundColor: '#f0f0f0', borderRadius: 2, p: 1, flexDirection: 'column', display:'flex' }}>{/* MOVE THIS TO A DRAGGABLE CONTEXT*/}
+        <Box sx={{ minWidth: 400, mx: 1, backgroundColor: '#f0f0f0', borderRadius: 2, p: 1, flexDirection: 'column', display:'flex' }}>{/* MOVE THIS TO A DRAGGABLE CONTEXT*/}
             {/* <div className="mt-4"> */}
                 {/* <input
                     type="text"

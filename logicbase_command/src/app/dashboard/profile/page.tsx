@@ -199,7 +199,6 @@ export default function UserDashboard() {
             </Card>
         </Box>
         <ProfileUpdateDrawer open={openDrawer} loading={loading} onClose={() => setOpenDrawer(false)} onPrimaryClick={handleUpdate} data={drawerFormData}/>
-        </>
-                        
+        </>    
     );
 }
