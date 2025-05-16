@@ -103,6 +103,7 @@ CREATE TABLE IF NOT EXISTS chat_message (
   message_sender_id  INT,
   message_chat_id    INT,
   message_react_config JSON,
+  message_status     VARCHAR(40),
   FOREIGN KEY (message_sender_id) REFERENCES users(user_id)
     ON UPDATE CASCADE
     ON DELETE SET NULL,

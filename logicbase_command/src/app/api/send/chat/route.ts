@@ -19,8 +19,6 @@ export async function POST(req: NextRequest) {
       [message_text, timestamp, message_sender_id, message_chat_id]
     ) as [ResultSetHeader, FieldPacket[]];
 
-    await connection.end();
-
     return NextResponse.json({ message: 'Message sent', message_id: result.insertId }, {status: 200});
   } catch (error) {
     console.error('Database error:', error);

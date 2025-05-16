@@ -1,14 +1,15 @@
+// /api/create/chat/route.ts
 import { NextResponse } from "next/server";
 import pool from "@/app/lib/Database/db";
 import { FieldPacket, ResultSetHeader } from "mysql2";
 import { v4 as uuidv4 } from "uuid";
 
 interface Chat {
-    chat_id: number;
-    chat_token: string;
-    chat_config: {
-        participants: number[];
-    };
+  chat_id: number;
+  chat_token: string;
+  chat_config: {
+    participants: number[];
+  };
 }
 export async function POST(req: Request) {
   try {
@@ -54,6 +55,15 @@ export async function POST(req: Request) {
       );
 
       const newChatId = result.insertId;
+
+      // ✅ Add participants to the chat_members table
+      await connection.execute(
+        `
+        INSERT INTO chat_members (chat_id, user_id)
+        VALUES (?, ?), (?, ?)
+        `,
+        [newChatId, sender_id, newChatId, receiver_id]
+      );
 
       return NextResponse.json({ chatId: newChatId, chatToken: chat_token, message: "New chat created" }, { status: 201 });
 

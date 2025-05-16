@@ -42,7 +42,7 @@ export default function RootLayout({
         // getItem('Clients', '/dashboard/clients', false, <CalendarOutlined />),
         getItem('Calendar', '/dashboard/calendar', false, <CalendarOutlined />),
         getItem('Chats', '/dashboard/chats', false, <MessageOutlined />),
-        getItem('Signout', '/logout', false, <LogoutOutlined />),
+        getItem('Sign Out', '/logout', false, <LogoutOutlined />),
   ]
 //   const [rows, setRows] = React.useState<AttendanceData[]>([]);
   const user = useUserStore((state)=>state.user)
