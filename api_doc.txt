@@ -1,0 +1,317 @@
+
+
+### Authentication
+
+#### Register User
+
+- **URL**: `/api/auth/register`
+- **Method**: `POST`
+- **Description**: Register a new user account
+- **Request Body**:
+  ```json
+  {
+    "email": "user@example.com",
+    "password": "password123",
+    "name": "User Name"
+  }
+  ```
+- **Success Response**: 
+  - **Code**: 201 Created
+  - **Content**: 
+    ```json
+    {
+      "message": "User registered successfully",
+      "user": {
+        "id": "user_id",
+        "email": "user@example.com",
+        "name": "User Name"
+      }
+    }
+    ```
+- **Error Response**:
+  - **Code**: 400 Bad Request
+  - **Content**: `{ "error": "Email already in use" }`
+
+#### Login
+
+- **URL**: `/api/auth/login`
+- **Method**: `POST`
+- **Description**: Authenticate a user and receive a session token
+- **Request Body**:
+  ```json
+  {
+    "email": "user@example.com",
+    "password": "password123"
+  }
+  ```
+- **Success Response**: 
+  - **Code**: 200 OK
+  - **Content**: 
+    ```json
+    {
+      "message": "Login successful",
+      "user": {
+        "id": "user_id",
+        "email": "user@example.com",
+        "name": "User Name",
+        "role": "user"
+      },
+      "token": "jwt_token"
+    }
+    ```
+- **Error Response**:
+  - **Code**: 401 Unauthorized
+  - **Content**: `{ "error": "Invalid credentials" }`
+
+#### Logout
+
+- **URL**: `/api/auth/logout`
+- **Method**: `POST`
+- **Description**: End the current user session
+- **Success Response**: 
+  - **Code**: 200 OK
+  - **Content**: `{ "message": "Logged out successfully" }`
+
+### User Management
+
+#### Get User Profile
+
+- **URL**: `/api/users/profile`
+- **Method**: `GET`
+- **Description**: Retrieve the current user's profile information
+- **Authentication**: Required
+- **Success Response**: 
+  - **Code**: 200 OK
+  - **Content**: 
+    ```json
+    {
+      "id": "user_id",
+      "email": "user@example.com",
+      "name": "User Name",
+      "role": "user",
+      "createdAt": "2023-01-01T00:00:00Z"
+    }
+    ```
+- **Error Response**:
+  - **Code**: 401 Unauthorized
+  - **Content**: `{ "error": "Not authenticated" }`
+
+#### Update User Profile
+
+- **URL**: `/api/users/profile`
+- **Method**: `PUT`
+- **Description**: Update the current user's profile information
+- **Authentication**: Required
+- **Request Body**:
+  ```json
+  {
+    "name": "Updated Name",
+    "email": "updated@example.com"
+  }
+  ```
+- **Success Response**: 
+  - **Code**: 200 OK
+  - **Content**: 
+    ```json
+    {
+      "message": "Profile updated successfully",
+      "user": {
+        "id": "user_id",
+        "email": "updated@example.com",
+        "name": "Updated Name"
+      }
+    }
+    ```
+
+### Chat API
+
+#### Get Chat Channels
+
+- **URL**: `/api/chat/channels`
+- **Method**: `GET`
+- **Description**: Retrieve available chat channels for the current user
+- **Authentication**: Required
+- **Success Response**: 
+  - **Code**: 200 OK
+  - **Content**: 
+    ```json
+    {
+      "channels": [
+        {
+          "id": "channel_id",
+          "name": "General",
+          "description": "General discussion channel",
+          "createdAt": "2023-01-01T00:00:00Z"
+        }
+      ]
+    }
+    ```
+
+#### Send Message
+
+- **URL**: `/api/chat/messages`
+- **Method**: `POST`
+- **Description**: Send a new message to a chat channel
+- **Authentication**: Required
+- **Request Body**:
+  ```json
+  {
+    "channelId": "channel_id",
+    "content": "Hello, world!"
+  }
+  ```
+- **Success Response**: 
+  - **Code**: 201 Created
+  - **Content**: 
+    ```json
+    {
+      "message": {
+        "id": "message_id",
+        "content": "Hello, world!",
+        "userId": "user_id",
+        "channelId": "channel_id",
+        "createdAt": "2023-01-01T00:00:00Z"
+      }
+    }
+    ```
+
+### Calendar API
+
+#### Get Events
+
+- **URL**: `/api/calendar/events`
+- **Method**: `GET`
+- **Description**: Retrieve calendar events for the current user
+- **Authentication**: Required
+- **Query Parameters**:
+  - `start`: Start date (ISO format)
+  - `end`: End date (ISO format)
+- **Success Response**: 
+  - **Code**: 200 OK
+  - **Content**: 
+    ```json
+    {
+      "events": [
+        {
+          "id": "event_id",
+          "title": "Team Meeting",
+          "start": "2023-01-01T10:00:00Z",
+          "end": "2023-01-01T11:00:00Z",
+          "description": "Weekly team sync",
+          "location": "Conference Room A"
+        }
+      ]
+    }
+    ```
+
+#### Create Event
+
+- **URL**: `/api/calendar/events`
+- **Method**: `POST`
+- **Description**: Create a new calendar event
+- **Authentication**: Required
+- **Request Body**:
+  ```json
+  {
+    "title": "Project Kickoff",
+    "start": "2023-01-15T09:00:00Z",
+    "end": "2023-01-15T10:30:00Z",
+    "description": "Initial project planning meeting",
+    "location": "Virtual"
+  }
+  ```
+- **Success Response**: 
+  - **Code**: 201 Created
+  - **Content**: 
+    ```json
+    {
+      "message": "Event created successfully",
+      "event": {
+        "id": "event_id",
+        "title": "Project Kickoff",
+        "start": "2023-01-15T09:00:00Z",
+        "end": "2023-01-15T10:30:00Z",
+        "description": "Initial project planning meeting",
+        "location": "Virtual"
+      }
+    }
+    ```
+
+### Admin API
+
+#### Get All Users (Admin Only)
+
+- **URL**: `/api/admin/users`
+- **Method**: `GET`
+- **Description**: Retrieve a list of all users (admin access required)
+- **Authentication**: Required (Admin role)
+- **Success Response**: 
+  - **Code**: 200 OK
+  - **Content**: 
+    ```json
+    {
+      "users": [
+        {
+          "id": "user_id",
+          "email": "user@example.com",
+          "name": "User Name",
+          "role": "user",
+          "createdAt": "2023-01-01T00:00:00Z"
+        }
+      ]
+    }
+    ```
+- **Error Response**:
+  - **Code**: 403 Forbidden
+  - **Content**: `{ "error": "Admin access required" }`
+
+#### Update User Role (Admin Only)
+
+- **URL**: `/api/admin/users/:userId/role`
+- **Method**: `PUT`
+- **Description**: Update a user's role (admin access required)
+- **Authentication**: Required (Admin role)
+- **Request Body**:
+  ```json
+  {
+    "role": "admin"
+  }
+  ```
+- **Success Response**: 
+  - **Code**: 200 OK
+  - **Content**: 
+    ```json
+    {
+      "message": "User role updated successfully",
+      "user": {
+        "id": "user_id",
+        "email": "user@example.com",
+        "name": "User Name",
+        "role": "admin"
+      }
+    }
+    ```
+
+### Error Handling
+
+All API endpoints follow a consistent error response format:
+
+```json
+{
+  "error": "Error message description",
+  "details": "Additional error details (optional)"
+}
+```
+
+Common HTTP status codes:
+- `200`: Success
+- `201`: Resource created
+- `400`: Bad request
+- `401`: Unauthorized
+- `403`: Forbidden
+- `404`: Resource not found
+- `500`: Server error
+
+### API Rate Limiting
+
+To ensure system stability, API requests are rate-limited to 100 requests per minute per user. Exceeding this limit will result in a `429 Too Many Requests` response.
