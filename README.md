@@ -65,38 +65,42 @@ To set up and run the project locally:
 
 1. **Clone the repository**:
 
-   ```bash
-   git clone https://github.com/rmv-coder/logicbase_command.git
-   ```
+    ```bash
+    git clone https://github.com/RMV-Coder/Logicbase_Command.git
+    ```
 
-2. **Install dependencies**:
+2. **Navigate to Project Directory**:
+    ```bash
+    cd logicbase_command
+    ```
+3. **Install dependencies**:
 
    ```bash
    npm install
    ```
 
-3. **Configure environment variables**:
+4. **Configure environment variables**:
 
    * Create a `.env` file in the root directory.
    * Set up the necessary environment variables as per your configuration.
 
-4. **Set up the MySQL database**:
+5. **Set up the MySQL database**:
 
    * Use the provided `database_structure.sql` file to initialize the database schema.
 
-5. **Build the project**:
+6. **Build the project**:
 
    ```bash
    npm run build
    ```
 
-6. **Start the development server**:
+7. **Start the development server**:
 
    ```bash
    npm run start
    ```
 
-7. **Access the application**:
+8. **Access the application**:
 
    * Open your browser and navigate to `http://localhost:3000`.
 
