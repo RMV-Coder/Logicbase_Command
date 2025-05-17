@@ -293,7 +293,7 @@ const Chats: React.FC = () => {
                                                 {user && msg.sender !== `${user.first_name} ${user.last_name}` &&
                                                     // <Space><Avatar alt={selectedChat.participantName} src={selectedChat.avatarUrl} sx={{ width: 32, height: 32 }} /><Text style={{ fontSize: '1rem', fontWeight: '500' }}>{msg.sender}</Text></Space> :
                                                     <Space><Avatar alt={selectedChat.participantName} src={selectedChat.avatarUrl} sx={{ width: 32, height: 32 }} /><Text style={{ fontSize: '1rem', fontWeight: '500' }}>{msg.sender}</Text></Space>}
-                                                <Box sx={{ mt: 1, display: 'flex', justifyContent: user && msg.sender === `${user.first_name} ${user.last_name}` ? 'flex-end' : 'flex-start' }}><Box sx={{ display: 'flex', flexDirection: 'column', gap: '2px', alignItems: user && msg.sender === `${user.first_name} ${user.last_name}` ? 'flex-end' : 'flex-start' }}><AntdCard size='small' style={{ marginTop: '2px', borderRadius: '16px', display: 'flex', flexDirection: 'column', gap: '1', maxWidth: 'fit-content', backgroundColor: 'rgba(22, 105, 178, 0.1)', borderColor: 'rgba(22, 105, 178, 0.3)' }}><Text>{msg.content}</Text></AntdCard><Text style={{ fontSize: '12px', color: 'rgba(0, 0, 0, 0.8)', paddingLeft: user && msg.sender === `${user.first_name} ${user.last_name}` ? '0px' : '8px', paddingRight: user && msg.sender === `${user.first_name} ${user.last_name}` ? '8px' : '0px' }}>{msg.timestamp}</Text></Box></Box>
+                                                <Box sx={{ mt: 1, display: 'flex', justifyContent: user && msg.sender === `${user.first_name} ${user.last_name}` ? 'flex-end' : 'flex-start' }}><Box sx={{ display: 'flex', flexDirection: 'column', gap: '2px', alignItems: user && msg.sender === `${user.first_name} ${user.last_name}` ? 'flex-end' : 'flex-start' }}><AntdCard size='small' style={{ marginTop: '2px', borderRadius: '16px', display: 'flex', flexDirection: 'column', gap: '1', maxWidth: 'fit-content', backgroundColor: 'rgba(22, 105, 178, 0.1)', borderColor: 'rgba(22, 105, 178, 0.3)' }}><Text>{msg.content}</Text></AntdCard><Text style={{ fontSize: '12px', color: 'rgba(0, 0, 0, 0.8)', paddingLeft: user && msg.sender === `${user.first_name} ${user.last_name}` ? '0px' : '8px', paddingRight: user && msg.sender === `${user.first_name} ${user.last_name}` ? '8px' : '0px' }}>{msg.timestamp}</Text></Box></Box>{/*•*/}
                                             </Typography>
                                         ))
                                     ) : (
@@ -325,7 +325,7 @@ const Chats: React.FC = () => {
                     )}
                 </Card>
             </Box>
-            <audio ref={notificationSound} src="/chat_notif_sound.mp3" preload="auto" />
+            <audio ref={notificationSound} src="/pop-up-notify-smooth-modern-332448.mp3" preload="auto" />
             <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'center' }} open={snackbarOpen} autoHideDuration={6000} onClose={() => setSnackbarOpen(false)}>
                 <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity} sx={{ width: '100%' }}>
                     {snackbarMessage}

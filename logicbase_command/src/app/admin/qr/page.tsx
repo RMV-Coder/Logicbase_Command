@@ -106,7 +106,7 @@ export default function QRGenerator() {
                     </Form.Item>
                 </Form>
             </Modal>
-            <Modal open={qr!==''&& !isEmail} onCancel={() => setQr('')}>
+            <Modal open={qr!==''&& !isEmail} onCancel={() => setQr('')} onOk={() => setQr('')}>
                 {/* <div dangerouslySetInnerHTML={{ __html: qr || '' }} /> */}
                 <p>Scan this QR to register a new employee (expires in {DateTime.now().plus({ hours: 1 }).toFormat('DD hh:mm a')})</p>
                 <QRCode

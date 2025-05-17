@@ -32,6 +32,7 @@ const ProjectDrawerForm: React.FC<NewProjectDrawerFormProps> = ({open, loading, 
             };
             console.log("Received valuse from form: ", formattedValues);
             onPrimaryClick(formattedValues as ProjectFormValues);
+            form.resetFields();
         });
     };
 

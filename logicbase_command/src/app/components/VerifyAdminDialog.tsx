@@ -30,12 +30,13 @@ const VerifyAdminDialog: React.FC<DialogFormProps> = ({open, onClose, isVerified
                 event.preventDefault();
                 const formData = new FormData(event.currentTarget);
                 const email = formData.get('email');
+                const password = formData.get('password');
                 const response = await fetch('/api/verify-admin', {
                     method: 'POST',
                     headers: {
                     'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ email }),
+                    body: JSON.stringify({ email, password }),
                     });
                     const data = await response.json();
                     if(!response.ok){
@@ -58,10 +59,21 @@ const VerifyAdminDialog: React.FC<DialogFormProps> = ({open, onClose, isVerified
                 autoFocus
                 required
                 margin="dense"
-                id="name"
+                id="email"
                 name="email"
                 label="Email Address"
                 type="email"
+                fullWidth
+                variant="standard"
+            />
+            <TextField
+                autoFocus
+                required
+                margin="dense"
+                id="password"
+                name="password"
+                label="Admin Password"
+                type="password"
                 fullWidth
                 variant="standard"
             />

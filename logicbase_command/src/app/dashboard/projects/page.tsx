@@ -39,7 +39,6 @@ export default function UserDashboard() {
     const [ selectedProjectId, setSelectedProjectId ] = useState<number | null>(null);
     const [ selectedProject, setSelectedProject ] = useState<DescriptionsProps['items']>([{key:'0', label:'', children:''}]);
     
-    
     const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
         setTabIndex(newValue);
     }
@@ -47,7 +46,7 @@ export default function UserDashboard() {
         try {
             const response = await fetch(`/api/projects`);
             if (!response.ok) throw new Error('Failed to fetch projects data');
-            const data = await response.json()
+            const data = await response.json();
             setProjects(data.projectRows);
             console.log('Data: ', data);
         }
@@ -78,8 +77,10 @@ export default function UserDashboard() {
         fetchData();
     }
     useEffect(()=>{
+        if(projects.length===0)
         fetchData();
-    },[])
+        
+    },[projects])
     useEffect(()=>{
         if(selectedProjectId !== null){
             setSelectedProject([{
@@ -139,7 +140,7 @@ export default function UserDashboard() {
                 <Tabs value={tabIndex} onChange={handleTabChange}>
                     <Tab label="Card View" />
                     <Tab label="Calendar View" />
-                    {selectedProjectId !== null && <Tab label="BOARD VIEW" />}
+                    <Tab label="Board View" disabled={selectedProjectId===null}/>
                 </Tabs>
                 {tabIndex === 0 ? <Grid container spacing={2} sx={{ p: 3 }}>
                     {projects.map((project) => (
