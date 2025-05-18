@@ -14,6 +14,7 @@ interface DialogFormProps{
 }
 const VerifyAdminDialog: React.FC<DialogFormProps> = ({open, onClose, isVerified}) => {
     const router = useRouter();
+
     const handleClose = () => {
         onClose();
     };
