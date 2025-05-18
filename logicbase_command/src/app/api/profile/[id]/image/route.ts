@@ -24,7 +24,7 @@ export async function GET(
         connection.release();
       }
     } catch (err) {
-      console.error('Error fetching kanban config:', err);
+      console.error('Error fetching user profile image:', err);
       return NextResponse.json({ error: 'Server error' }, { status: 500 });
     }
 }

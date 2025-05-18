@@ -3,9 +3,10 @@ import { useState, useEffect, ChangeEvent } from 'react';
 import type { Dayjs } from 'dayjs';
 import { useUserStore } from '@/stores/userStore';
 import { Typography as AntTypography, Descriptions } from 'antd';
-import { Box, Button, ButtonBase, Card, CardActions, CardContent, Avatar } from '@mui/material';
+import { Box, Button, ButtonBase, Card, CardActions, CardContent, Avatar, Snackbar, Alert, Skeleton, Grid, Typography } from '@mui/material';
 import ProfileUpdateDrawer from '@/app/components/ProfileUpdateDrawer';
 import dayjs from 'dayjs';
+import ChangePasswordDrawer from '@/app/components/ChangePasswordDrawer';
 const { Title } = AntTypography;
 interface ProfileData {
     name: string;
@@ -19,6 +20,11 @@ interface ProfileData {
     contact_number: string;
     first_name?:string;
     last_name?:string;
+}
+interface PassFormData {
+    current_password: string;
+    new_password: string;
+    confirm_new_password: string;
 }
 interface ProfileFormData {
     email: string;
@@ -40,6 +46,27 @@ export default function UserDashboard() {
     const [drawerFormData, setDrawerFormData] = useState<ProfileData | null>(null);
     const [openDrawer, setOpenDrawer] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
+    const [open_, setOpen_] = useState<boolean>(false);
+    const [loading_, setLoading_] = useState<boolean>(false);
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
+    const handleUpdateProfilePicture = async(profile_image: string) => {
+        const response = await fetch(`/api/profile/${userID}`, {
+            method: 'POST',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({profile_image})
+        })
+        setLoading(false)
+        if(!response.ok){
+            throw new Error("Failed to update profile picture")
+        }
+        const result = await response.json();
+       
+        console.log(result.message);
+        setOpenDrawer(false);
+        // fetchData(userID);
+    }
   const handleAvatarChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -47,7 +74,7 @@ export default function UserDashboard() {
       const reader = new FileReader();
       reader.onload = () => {
         setAvatarSrc(reader.result as string);
-        handleUpdateProfile(reader.result as string);
+        handleUpdateProfilePicture(reader.result as string);
         if(user)
         setUser({...user, profile_image: reader.result as string})
       };
@@ -55,21 +82,6 @@ export default function UserDashboard() {
       
     }
   };
-//   const fetchProfileImage = async (id:string) => {
-//     try {
-//         const response = await fetch(`/api/profile/${id}/image`);
-//         if (!response.ok) throw new Error('Failed to fetch profile image');
-//         const data = await response.json()
-//         console.log('Data: ', data);
-//         if(!response.ok){
-//             throw new Error(data.error);
-//         }
-//         setProfileImage(data.profile.profile_image);
-//     }
-//     catch (error){
-//         console.error(error);
-//     }
-// }
     const fetchData = async (id:string) => {
         try {
             const response = await fetch(`/api/profile/${id}`);
@@ -77,6 +89,7 @@ export default function UserDashboard() {
             const data = await response.json()
             console.log('Data: ', data);
             if(!response.ok){
+                setSnackbarMessage(data.error);
                 throw new Error(data.error);
             }
             const prof = data.profile;
@@ -100,43 +113,64 @@ export default function UserDashboard() {
             // fetchProfileImage(id);
         }
         catch (error){
+            setSnackbarSeverity('error');
+            setSnackbarOpen(true);
             console.error(error);
         }
     }
     const handleUpdate = async(values:ProfileFormData) => {
-        setLoading(true)
-        console.log("Values: ", values);
-        const response = await fetch(`/api/profile/${userID}`, {
-            method: 'POST',
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({...values, userID})
-        })
-        setLoading(false)
-        if(!response.ok){
-            throw new Error("Failed to update profile")
+        try{
+            setLoading(true)
+            console.log("Values: ", values);
+            const response = await fetch(`/api/profile/${userID}`, {
+                method: 'POST',
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({...values, userID})
+            })
+            setLoading(false)
+            const result = await response.json();
+            if(!response.ok){
+                setSnackbarMessage(result.error);
+                throw new Error("Failed to update profile");
+            }
+            console.log(result.message);
+            setSnackbarSeverity('success')
+            setSnackbarMessage(result.message);
+            setSnackbarOpen(true);
+            setOpenDrawer(false);
+            fetchData(userID);
+        } catch (error){
+            setSnackbarSeverity('error');
+            console.log(error);
+        } finally {
+            setSnackbarOpen(true);
         }
-        const result = await response.json();
-       
-        console.log(result.message);
-        setOpenDrawer(false);
-        fetchData(userID);
     }
-    const handleUpdateProfile = async(profile_image: string) => {
-        const response = await fetch(`/api/profile/${userID}`, {
-            method: 'POST',
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({profile_image})
-        })
-        setLoading(false)
-        if(!response.ok){
-            throw new Error("Failed to update profile picture")
+    const handleUpdatePassword = async(values: PassFormData) => {
+        try {
+            setLoading_(true);
+            const response = await fetch(`/api/profile/update-password/${userID}`, {
+                method:'POST',
+                headers:{ "Content-Type": "application/json" },
+                body: JSON.stringify({...values})
+            })
+            const data = await response.json();
+            setLoading_(false);
+            if(!response.ok){
+                setSnackbarMessage(data.error);
+                throw new Error('Failed to Update Password');
+            }
+            setSnackbarMessage(data.message);
+            setSnackbarSeverity('success');
+            setOpen_(false);
+        } catch(error){
+            setSnackbarSeverity('error');
+            console.log(error);
+        } finally {
+            setSnackbarOpen(true);
         }
-        const result = await response.json();
-       
-        console.log(result.message);
-        setOpenDrawer(false);
-        // fetchData(userID);
-    }
+    };
+    
     useEffect(()=>{
         if(user){
             if(user.user_id){
@@ -190,15 +224,30 @@ export default function UserDashboard() {
                 />
     </ButtonBase>
                 } column={{ xs: 1, sm: 1, md: 1, lg: 2, xl: 2, xxl: 2 }} items={profile ? Object.entries(profile).map(([key, value]) => ({ key, label:key.replace(/_/g, ' ').normalize(), children:value })) : Object.entries(user as unknown as ProfileData).map(([key, value]) => ({ key, label:key!=='profile_image'?key.replace(/_/g, ' ').toLowerCase().split(' ').map(word=>word.charAt(0).toUpperCase()+word.slice(1)).join('').normalize():'', children:key === 'birthdate' && value ? dayjs(value).format('MMMM D, YYYY') :(key!=='profile_image'?value:'') }))} style={{ minWidth: '45vw', maxWidth:'60vw'}}/>):(
-                    <Card>Loading profile information...</Card>
+                    <>
+                        <Skeleton variant='circular' animation={'pulse'} width={202} height={202}/>
+                        <Grid size={{ xs: 1, sm: 1, md: 1, lg: 2, xl: 2 }}>
+                        <Typography style={{fontSize:'2rem', width:'1200px', paddingTop:'12px'}}><Skeleton/></Typography>
+                        <Typography style={{fontSize:'2rem', width:'1200px'}}><Skeleton/></Typography>
+                        <Typography style={{fontSize:'2rem', width:'1200px'}}><Skeleton/></Typography>
+                        <Typography style={{fontSize:'2rem', width:'420px'}}><Skeleton/></Typography>
+                        </Grid>
+                    </>
                 )}
             </CardContent>
             <CardActions sx={{p:6, pt:0}}>
                 <Button variant='outlined' size="large" onClick={()=>setOpenDrawer(true)}>Update</Button>
+                <Button variant='contained' size="large" onClick={()=>setOpen_(true)}>Change Password</Button>
             </CardActions>
             </Card>
         </Box>
         <ProfileUpdateDrawer open={openDrawer} loading={loading} onClose={() => setOpenDrawer(false)} onPrimaryClick={handleUpdate} data={drawerFormData}/>
+        <ChangePasswordDrawer open={open_} loading={loading_} onClose={()=>setOpen_(false)} onPrimaryClick={handleUpdatePassword}/>
+        <Snackbar anchorOrigin={{ vertical: 'top', horizontal:'center' }} open={snackbarOpen} autoHideDuration={6000} onClose={() => setSnackbarOpen(false)}>
+            <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity} sx={{ width: '100%' }}>
+                {snackbarMessage}
+            </Alert>
+        </Snackbar>
         </>    
     );
 }
