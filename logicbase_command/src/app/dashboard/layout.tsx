@@ -84,7 +84,6 @@ export default function RootLayout({
         // style={{backgroundColor:'#FFFFFE'}}
         theme='dark'
       >
-        
         <Menu theme="dark" mode="inline" defaultSelectedKeys={['/dashboard']} items={items}
         style={{paddingTop:'72px'}}
         selectedKeys={[pathname]}
