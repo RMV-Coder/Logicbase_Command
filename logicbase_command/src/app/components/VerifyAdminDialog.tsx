@@ -30,9 +30,13 @@ const VerifyAdminDialog: React.FC<DialogFormProps> = ({open, onClose, isVerified
                 onSubmit: async(event: React.FormEvent<HTMLFormElement>) => {
                 event.preventDefault();
                 const formData = new FormData(event.currentTarget);
-                console.log("Form Data:", JSON.stringify(formData));
-                const email = formData.get('email');
-                const password = formData.get('password');
+                // Convert FormData → object
+                const values = Object.fromEntries(formData.entries());
+
+                console.log("Form Data:", values);
+
+                const email = values.email as string;
+                const password = values.password as string;
                 const response = await fetch('/api/verify-admin', {
                     method: 'POST',
                     headers: {
