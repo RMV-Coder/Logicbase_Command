@@ -33,7 +33,7 @@ const VerifyAdminDialog: React.FC<DialogFormProps> = ({open, onClose, isVerified
                 // Convert FormData → object
                 const values = Object.fromEntries(formData.entries());
 
-                console.log("Form Data:", values);
+                // console.log("Form Data:", values);
 
                 const email = values.email as string;
                 const password = values.password as string;

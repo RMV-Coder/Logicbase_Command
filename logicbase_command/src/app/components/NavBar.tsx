@@ -5,6 +5,7 @@ import { useUserStore } from "@/stores/userStore";
 import { Logout } from '@mui/icons-material';
 import { Account } from '@toolpad/core/Account';
 import { AppProvider, Session } from '@toolpad/core/AppProvider';
+import { useMediaQuery } from "@mui/material";
 // import { UserOrg, CustomSession } from '@/app/components/AccountCustom'
 // import Icon from '@ant-design/icons'
 import Image from 'next/image'
@@ -17,6 +18,9 @@ const { Header }  = Layout
 
 const Nav: React.FC = () =>
 {
+    
+
+    const isMobile = useMediaQuery("(max-width:768px)");
     const user = useUserStore((state)=>state.user)
     const clearUser = useUserStore((state) => state.clearUser)
     const router = useRouter()
@@ -54,52 +58,26 @@ const Nav: React.FC = () =>
     return (
     <>
     <AppProvider authentication={authentication} session={session}>
-        <Header style={{ display: "flex", alignItems: "center", justifyContent:'space-between', background: "#1669B2", height:'72px' }}>
+        <Header style={{ display: "flex", alignItems: "center", justifyContent:'space-between', background: "#1669B2", height: isMobile?'56px':'72px' }}>
             <Space>
-                {/* <Card
-                    hoverable
-                    onClick={()=>router.push("/")}
-                    style={{ width: 196, color: 'white', height: '3.5em', overflow: 'hidden', position: 'relative', padding:'6px' }}
-                > */}
-                    {/* <Icon
-                        component={ */}
-                            {<><Image
-                                src="/LBI---logo-white-icon.png"
-                                alt="Logicbase Logo"
-                                width={60}
-                                height={60}
-                                priority={true}/>
-                                <Text style={{ color: 'white', fontSize: '1.15rem', fontWeight: 'bold' }}>Logicbase Command</Text></>
-                                
-                                }
-
-                            {/* // MoneyCacheLogo as React.FC<React.SVGProps<SVGSVGElement>> 
-                        } 
-                        style={{
-                            fontSize: '10rem',
-                            position: 'absolute',
-                            top: '50%',
-                            left: '50%',
-                            transform: 'translate(-50%, -50%)',
-                        }}
-                    /> */}
-                {/* </Card> */}
-                
+                {<><Image
+                    src="/LBI---logo-white-icon.png"
+                    alt="Logicbase Logo"
+                    width={isMobile ? 40 : 60}
+                    height={isMobile ? 40 : 60}
+                    priority={true}/>
+                    <Text style={{ color: 'white', fontSize: isMobile?'1rem':'1.15rem', fontWeight: 'bold' }}>Logicbase Command</Text></>
+                }
             </Space>
-            {/* <LogoutButton /> */}
             <div>
                 <Account
                 slotProps={{
                     signInButton: {
-                    // children: 'Login',
-                    // color: 'success',
                     },
                     signOutButton: {
-                    // color: 'success',
                     startIcon: <Logout />,
                     },
                     preview: {
-                    // variant: 'expanded',
                     slotProps: {
                         avatarIconButton: {
                         sx: {
